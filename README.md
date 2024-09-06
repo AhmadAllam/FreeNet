@@ -68,7 +68,11 @@ python find.py www.vodafone.com 0
 * This tool will scan hosts from the `host.txt` file.
 
 #### How to Use?
-- To run the script with a direct scan:
+- To run the scan with default settings:
+  ```bash
+  python scan.py
+  ```
+- For a direct scan:
   ```bash
   python scan.py -m direct -o results.json -p 80
   ```
