@@ -40,20 +40,17 @@ This tool is made with love for
 #unlimited_internet_in_egypt
 ```
 
-### Find
+### **Find Tool: `find.py`**
 
 * This tool helps to find bughosts using a domain or IP.
-* When typing `www.google.com`, the tool will search for all addresses containing the hostname within the scope of this IP. 
-* This tool searches in IP ranges like `192.168.xxx.xxx` or `192.168.1.xxx`.
 
-#### How to use?
-
+#### How to Use?
 - To find a bughost:
   ```bash
   python find.py www.vodafone.com 0
   ```
   - `www.vodafone.com` is the name of the bughost.
-  - `0` at the end indicates the search depth.
+  - `0` at the end indicates the search depth. 
   - If you want a more in-depth search, write `1` or `2` instead of `0`.
   - To specify the number of threads and increase the number of operations, use:
     ```bash
@@ -61,9 +58,24 @@ This tool is made with love for
     ```
   - The default value is 10 threads.
 
-### Scan
+#### Example Usage:
+```bash
+python find.py www.vodafone.com 0
+```
+
+### **Scan Tool: `scan.py`**
 
 * This tool will scan hosts from the `host.txt` file.
+
+#### How to Use?
+- To run the script with a direct scan:
+  ```bash
+  python scan.py -m direct -o results.json -p 80
+  ```
+- To run it using a proxy:
+  ```bash
+  python scan.py -m proxy -p 8080 -P proxy.example.com:8080
+  ```
 
 #### Available Options:
 - **-d, --deep**: Specify the subdomain depth (number of sub-levels). The default value is 2.
@@ -88,11 +100,19 @@ This tool is made with love for
   python scan.py -m proxy -p 8080 -P proxy.example.com:8080
   ```
 
-### Host to IP
+### **Host to IP Tool: `host2ip.py`**
 
-* This tool will convert hostnames in `host.txt` to IPs. 
-* The result will be saved in the `ip.txt` file.
-* If you want to scan an IP, just copy it from the `ip.txt` file to `host.txt` and run the scan tool.
+* This tool will convert hostnames in `host.txt` to IPs.
+
+#### How to Use?
+- To convert hostnames to IPs:
+  ```bash
+  python host2ip.py
+  ```
+
+#### Output:
+- The result will be saved in the `ip.txt` file.
+- If you want to scan an IP, just copy it from the `ip.txt` file to `host.txt` and run the scan tool.
 
 #### Example Usage:
 ```bash
