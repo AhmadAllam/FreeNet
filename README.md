@@ -42,11 +42,6 @@ This tool is made with love for
 
 ### **Find Tool: `find.py`**
 
-* This tool helps to find bughosts using a domain or IP.
-
-#### How to Use?
-- To find a bughost:
-  ```bash
 **Running Find.py Tool**: You can run the tool using the command line. The tool requires inputs for the site name and subnet mask. There are two options for the subnet mask:
 
    - `1`: Subnet mask 255.255.255.0
