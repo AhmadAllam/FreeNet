@@ -27,7 +27,7 @@ This is a simple script to find bughosts in ISPs to get free internet using SSH 
 
 3. Install the required Python package:
    ```bash
-   pip install requests
+   pip install requests asyncio
    ```
 
 4. Now follow the instructions below.
@@ -47,20 +47,34 @@ This tool is made with love for
 #### How to Use?
 - To find a bughost:
   ```bash
-  python find.py www.vodafone.com 0
-  ```
-  - `www.vodafone.com` is the name of the bughost.
-  - `0` at the end indicates the search depth. 
-  - If you want a more in-depth search, write `1` or `2` instead of `0`.
-  - To specify the number of threads and increase the number of operations, use:
-    ```bash
-    python find.py www.vodafone.com 0 --threads 20
-    ```
-  - The default value is 10 threads.
+**Running Find.py Tool**: You can run the tool using the command line. The tool requires inputs for the site name and subnet mask. There are two options for the subnet mask:
 
-#### Example Usage:
-```bash
-python find.py www.vodafone.com 0
+   - `1`: Subnet mask 255.255.255.0
+   - `2`: Subnet mask 255.255.0.0
+
+   ### Example 1: Using Subnet Mask 255.255.255.0
+
+   ```bash
+   python find.py vodafone.com 1
+   ```
+
+   ### Example 2: Using Subnet Mask 255.255.0.0
+
+   ```bash
+   python find.py vodafone.com 2
+   ```
+
+   ### Additional Options
+
+   You can specify the number of concurrent requests using the `--threads` option. For example, to set 10 concurrent requests:
+
+   ```bash
+   python script.py Vodafone.com 1 --threads 10
+   ```
+
+## Output
+
+After running the program, it will search for hostnames for each IP address in the specified subnet. The results will be printed to the console and the hostnames will be written to a text file named `host.txt`.
 ```
 
 ### **Scan Tool: `scan.py`**
@@ -74,7 +88,7 @@ python find.py www.vodafone.com 0
   ```
 - For a direct scan:
   ```bash
-  python scan.py -m direct -o results.json -p 80
+  python scan.py -m direct -o hosts.txt -p 80
   ```
 - To run it using a proxy:
   ```bash
@@ -97,7 +111,7 @@ python find.py www.vodafone.com 0
 #### Example Usage:
 - To run the script with a direct scan:
   ```bash
-  python scan.py -m direct -o results.json -p 80
+  python scan.py -m direct -o hosts.txt -p 80
   ```
 - To run it using a proxy:
   ```bash
