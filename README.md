@@ -32,14 +32,6 @@ This is a simple script to find bughosts in ISPs to get free internet using SSH 
 
 4. Now follow the instructions below.
 
-## Help
-
-This tool is made with love for
-
-```
-#unlimited_internet_in_egypt
-```
-
 ### **Find Tool: `find.py`**
 
 **Running Find.py Tool**: You can run the tool using the command line. The tool requires inputs for the site name and subnet mask. There are two options for the subnet mask:
@@ -130,6 +122,14 @@ After running the program, it will search for hostnames for each IP address in t
 #### Example Usage:
 ```bash
 python host2ip.py
+```
+
+## notes
+
+This tool is made with love for
+
+```
+#unlimited_internet_in_egypt
 ```
 
 ## Authors
