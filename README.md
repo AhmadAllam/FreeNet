@@ -1,5 +1,3 @@
-# Free-internet
-
 Find bughosts for HTTP Custom / HA Tunnel.
 
 ## Description
@@ -25,48 +23,49 @@ This is a simple script to find bughosts in ISPs to get free internet using SSH 
    chmod +x *
    ```
 
-3. Install the required Python package:
+3. Install the required Python packages:
    ```bash
    pip install requests asyncio
    ```
 
-4. Now follow the instructions below.
+4. Follow the instructions below.
 
 ### **Find Tool: `find.py`**
 
-**Running Find.py Tool**: You can run the tool using the command line. The tool requires inputs for the site name and subnet mask. There are two options for the subnet mask:
+**Running `find.py` Tool**: You can run the tool using the command line. The tool requires inputs for the site name and subnet mask. There are two options for the subnet mask:
 
-   - `1`: Subnet mask 255.255.255.0
-   - `2`: Subnet mask 255.255.0.0
+- `1`: Subnet mask 255.255.255.0
+- `2`: Subnet mask 255.255.0.0
 
-   ### Example 1: Using Subnet Mask 255.255.255.0
+#### Example 1: Using Subnet Mask 255.255.255.0
 
-   ```bash
-   python find.py vodafone.com 1
-   ```
+```bash
+python find.py vodafone.com 1
+```
 
-   ### Example 2: Using Subnet Mask 255.255.0.0
+#### Example 2: Using Subnet Mask 255.255.0.0
 
-   ```bash
-   python find.py vodafone.com 2
-   ```
+```bash
+python find.py vodafone.com 2
+```
 
-   ### Additional Options
+#### Additional Options
 
-   You can specify the number of concurrent requests using the `--threads` option. For example, to set 10 concurrent requests:
+You can specify the number of concurrent requests using the `--threads` option. For example, to set 10 concurrent requests:
 
-   ```bash
-   python script.py Vodafone.com 1 --threads 10
-   ```
+```bash
+python find.py vodafone.com 1 --threads 10
+```
 
 ## Output
 
 After running the program, it will search for hostnames for each IP address in the specified subnet. The results will be printed to the console and the hostnames will be written to a text file named `host.txt`.
-```
+
+---
 
 ### **Scan Tool: `scan.py`**
 
-* This tool will scan hosts from the `host.txt` file.
+This tool will scan hosts from the `host.txt` file.
 
 #### How to Use?
 - To run the scan with default settings:
@@ -105,9 +104,11 @@ After running the program, it will search for hostnames for each IP address in t
   python scan.py -m proxy -p 8080 -P proxy.example.com:8080
   ```
 
+---
+
 ### **Host to IP Tool: `host2ip.py`**
 
-* This tool will convert hostnames in `host.txt` to IPs.
+This tool will convert hostnames in `host.txt` to IPs.
 
 #### How to Use?
 - To convert hostnames to IPs:
@@ -124,7 +125,7 @@ After running the program, it will search for hostnames for each IP address in t
 python host2ip.py
 ```
 
-## notes
+## Notes
 
 This tool is made with love for
 
