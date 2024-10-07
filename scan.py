@@ -1,47 +1,24 @@
-# Program settings
-CN = "\033[K"  # Clear line
-Y1 = "\033[33m"  # Yellow color
-RED = "\033[31m"  # Red color
-GREEN = "\033[32m"  # Green color
-CC = "\033[0m"  # Reset color
+# color settings
+CN = "\033[K"
+Y1 = "\033[33m"
+RED = "\033[31m"
+GREEN = "\033[32m"
+CC = "\033[0m"
 
 # Scan settings
-DEFAULT_DEEP = 2  # Subdomain depth
-DEFAULT_MODE = "direct"  # Scan mode (direct, proxy, ssl)
-DEFAULT_OUTPUT = None  # Output file name
-DEFAULT_PORT = 80  # Target port
-DEFAULT_THREADS = 8  # Number of threads
-DEFAULT_IGNORE_REDIRECT_LOCATION = ""  # Ignore redirect location in proxy mode
-DEFAULT_METHOD = "HEAD"  # Default HTTP method
-DEFAULT_PROXY = None  # Default proxy
+DEFAULT_DEEP = 2
+DEFAULT_MODE = "direct"
+DEFAULT_PORT = 80
+DEFAULT_THREADS = 8
+DEFAULT_IGNORE_REDIRECT_LOCATION = ""
+DEFAULT_METHOD = "HEAD"
+DEFAULT_PROXY = None
 
-# BugScanner settings
-PROXY_ROTATOR_PORT = "3080"
-INJECT_ENABLE = True
-INJECT_TYPE = 2
-INJECT_PORT = "8989"
-INJECT_RULES = {}
-INJECT_PAYLOAD = ""
-INJECT_MEEK_TYPE = 0
 INJECT_SERVER_NAME_INDICATION = "twitter.com"
 INJECT_TIMEOUT = 5
 INJECT_SHOW_LOG = False
 
-PSIPHON_CORE = 4
-PSIPHON_CORE_NAME = "psiphon-tunnel-core"
-PSIPHON_TUNNEL = 1
-PSIPHON_REGION = ""
-PSIPHON_PROTOCOLS = [
-    "FRONTED-MEEK-HTTP-OSSH",
-    "FRONTED-MEEK-OSSH",
-]
-PSIPHON_TUNNEL_WORKERS = 6
-PSIPHON_KUOTA_DATA_LIMIT = 4
-PSIPHON_AUTHORISATIONS = [""]
-
-# Separator between variables and Script
-# ================================
-
+#______________________Script____________________
 import os
 import re
 import sys
@@ -75,27 +52,30 @@ signal.signal(signal.SIGINT, signal_handler)
 
 class BugScanner:
     brainfuck_config = {
-        "ProxyRotator": {"Port": PROXY_ROTATOR_PORT},
+        "ProxyRotator": {"Port": "3080"},
         "Inject": {
-            "Enable": INJECT_ENABLE,
-            "Type": INJECT_TYPE,
-            "Port": INJECT_PORT,
-            "Rules": INJECT_RULES,
-            "Payload": INJECT_PAYLOAD,
-            "MeekType": INJECT_MEEK_TYPE,
-            "ServerNameIndication": INJECT_SERVER_NAME_INDICATION,
-            "Timeout": INJECT_TIMEOUT,
-            "ShowLog": INJECT_SHOW_LOG,
+            "Enable": True,
+            "Type": 2,
+            "Port": "8989",
+            "Rules": {},
+            "Payload": "",
+            "MeekType": 0,
+            "ServerNameIndication": "twitter.com",
+            "Timeout": 5,
+            "ShowLog": False,
         },
-        "PsiphonCore": PSIPHON_CORE,
+        "PsiphonCore": 4,
         "Psiphon": {
-            "CoreName": PSIPHON_CORE_NAME,
-            "Tunnel": PSIPHON_TUNNEL,
-            "Region": PSIPHON_REGION,
-            "Protocols": PSIPHON_PROTOCOLS,
-            "TunnelWorkers": PSIPHON_TUNNEL_WORKERS,
-            "KuotaDataLimit": PSIPHON_KUOTA_DATA_LIMIT,
-            "Authorizations": PSIPHON_AUTHORISATIONS,
+            "CoreName": "psiphon-tunnel-core",
+            "Tunnel": 1,
+            "Region": "",
+            "Protocols": [
+                "FRONTED-MEEK-HTTP-OSSH",
+                "FRONTED-MEEK-OSSH",
+            ],
+            "TunnelWorkers": 6,
+            "KuotaDataLimit": 4,
+            "Authorizations": [""],
         },
     }
     scanned = {"direct": {}, "ssl": {}, "proxy": {}}
@@ -169,26 +149,36 @@ class BugScanner:
 
     def print_result(self, host, hostname, port=None, status_code=None, server=None, sni=None):
         color = Y1
-        server_str = f"{server:<20}" if server else " " * 20  # Ensure space for the server
-        status_code_str = f"{status_code:<4}" if status_code else " " * 4  # Ensure space for the status code
-        hostname_str = f"{hostname}" if hostname else " "  # Ensure space for the hostname
+        server_str = f"{server:<20}" if server else " " * 20
+        status_code_str = f"{status_code:<4}" if status_code else " " * 4
+        hostname_str = f"{hostname}" if hostname else " "
         
         if server and server.lower().startswith("cloud"):
             color = GREEN
-            with open("cloud.txt", "a") as f:
-                f.write(f"{hostname}\n")
+            with open("cloud.txt", "a+") as f:
+                f.seek(0)
+                if hostname not in f.read():
+                    f.write(f"{hostname}\n")
         elif server and server.lower().startswith("apache"):
-            with open("apache.txt", "a") as f:
-                f.write(f"{hostname}\n")
+            with open("apache.txt", "a+") as f:
+                f.seek(0)
+                if hostname not in f.read():
+                    f.write(f"{hostname}\n")
         elif server and server.lower().startswith("nginx"):
-            with open("nginx.txt", "a") as f:
-                f.write(f"{hostname}\n")
+            with open("nginx.txt", "a+") as f:
+                f.seek(0)
+                if hostname not in f.read():
+                    f.write(f"{hostname}\n")
         elif server and server.lower().startswith("awselb"):
-            with open("awselb.txt", "a") as f:
-                f.write(f"{hostname}\n")
+            with open("awselb.txt", "a+") as f:
+                f.seek(0)
+                if hostname not in f.read():
+                    f.write(f"{hostname}\n")
         else:
-            with open("other.txt", "a") as f:
-                f.write(f"{hostname}\n")
+            with open("other.txt", "a+") as f:
+                f.seek(0)
+                if hostname not in f.read():
+                    f.write(f"{hostname}\n")
 
         log(f"{color}{host:<15} {status_code_str} {server_str} {f'  {sni:<4}' if sni else '    '}  {hostname_str}{CC}")
 

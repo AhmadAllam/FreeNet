@@ -4,13 +4,15 @@ import signal
 import sys
 import argparse
 
+#change_dns
+dns1 = "8.8.8.8"
+dns2 = "8.8.4.4"
+
+#ـــــــــــــــــــــــــــــــــــــــــــــــــــــــــــ
 DARK_BLUE = "\033[34m"
 LIGHT_BLUE = "\033[36m"
 RED = "\033[31m"
 CC = "\033[0m"
-
-dns1 = "8.8.8.8"
-dns2 = "8.8.4.4"
 
 def signal_handler(sig, frame):
     print(f'\n{RED}Goodbye!{CC}')
@@ -68,27 +70,37 @@ async def find_hostnames_in_subnet(ip, mask, max_requests):
     print(f"{'-' * 55}")
 
     try:
-        if mask == (255, 255, 255, 0): 
-            for i in range(256):
-                addr = f"{subnet}{i}"
-                hostname = await get_hostname(addr)
-                with open(filename, "a") as f:
+        with open(filename, "a+") as f:
+            f.seek(0)  # Move to the beginning of the file
+            existing_hostnames = f.read().splitlines()  # Read existing hostnames
+
+            if mask == (255, 255, 255, 0): 
+                for i in range(256):
+                    addr = f"{subnet}{i}"
+                    hostname = await get_hostname(addr)
                     if hostname:
-                        print(f"{DARK_BLUE}{addr:<20} {LIGHT_BLUE}{hostname:<20}{CC}")
-                        f.write(hostname + "\n")
+                        if hostname not in existing_hostnames:
+                            print(f"{DARK_BLUE}{addr:<20} {LIGHT_BLUE}{hostname:<20}{CC}")
+                            f.write(hostname + "\n")
+                            existing_hostnames.append(hostname)  # Add to existing hostnames
+                        else:
+                            print(f"{DARK_BLUE}{addr:<20} {LIGHT_BLUE}{'Duplicate hostname':<20}{CC}")
                     else:
                         print(f"{DARK_BLUE}{addr:<20} {LIGHT_BLUE}{'No hostname':<20}{CC}")
 
-        elif mask == (255, 255, 0, 0): 
-            first_two_octets = '.'.join(ip.split('.')[:2]) + '.'
-            for second_octet in range(256):
-                for i in range(256):
-                    full_addr = f"{first_two_octets}{second_octet}.{i}"
-                    hostname = await get_hostname(full_addr)
-                    with open(filename, "a") as f:
+            elif mask == (255, 255, 0, 0): 
+                first_two_octets = '.'.join(ip.split('.')[:2]) + '.'
+                for second_octet in range(256):
+                    for i in range(256):
+                        full_addr = f"{first_two_octets}{second_octet}.{i}"
+                        hostname = await get_hostname(full_addr)
                         if hostname:
-                            print(f"{DARK_BLUE}{full_addr:<20} {LIGHT_BLUE}{hostname:<20}{CC}")
-                            f.write(hostname + "\n")
+                            if hostname not in existing_hostnames:
+                                print(f"{DARK_BLUE}{full_addr:<20} {LIGHT_BLUE}{hostname:<20}{CC}")
+                                f.write(hostname + "\n")
+                                existing_hostnames.append(hostname)
+                            else:
+                                print(f"{DARK_BLUE}{full_addr:<20} {LIGHT_BLUE}{'Duplicate hostname':<20}{CC}")
                         else:
                             print(f"{DARK_BLUE}{full_addr:<20} {LIGHT_BLUE}{'No hostname':<20}{CC}")
 
