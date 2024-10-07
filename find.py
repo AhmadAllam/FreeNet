@@ -9,19 +9,25 @@ LIGHT_BLUE = "\033[36m"
 RED = "\033[31m"
 CC = "\033[0m"
 
+dns1 = "8.8.8.8"
+dns2 = "8.8.4.4"
+
 def signal_handler(sig, frame):
     print(f'\n{RED}Goodbye!{CC}')
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
 
+def set_dns():
+    with open('/etc/resolv.conf', 'w') as file:
+        file.write(f"nameserver {dns1}\n")
+        file.write(f"nameserver {dns2}\n")
+
 async def get_hostname(addr):
     try:
         hostname = await asyncio.to_thread(socket.gethostbyaddr, addr)
         return hostname[0]
-    except socket.herror:
-        return None
-    except socket.gaierror:
+    except (socket.herror, socket.gaierror):
         return None
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
@@ -34,10 +40,7 @@ async def fetch_hostnames(subnet, max_requests):
         async with semaphore:
             return await get_hostname(addr)
 
-    tasks = []
-    for i in range(256):
-        addr = f"{subnet}{i}"
-        tasks.append(sem_get_hostname(addr))
+    tasks = [sem_get_hostname(f"{subnet}{i}") for i in range(256)]
     return await asyncio.gather(*tasks)
 
 def get_ip_address(site):
@@ -97,6 +100,7 @@ async def find_hostnames_in_subnet(ip, mask, max_requests):
     sys.exit(0)
 
 def main():
+    set_dns()
     parser = argparse.ArgumentParser(description="Find hostnames in a subnet.")
     parser.add_argument("site", help="The site to get IP address from.")
     parser.add_argument("mask", type=int, nargs='?', default=1, choices=[1, 2], help="The subnet mask choice (1 or 2).")

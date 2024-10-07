@@ -1,3 +1,47 @@
+# Program settings
+CN = "\033[K"  # Clear line
+Y1 = "\033[33m"  # Yellow color
+RED = "\033[31m"  # Red color
+GREEN = "\033[32m"  # Green color
+CC = "\033[0m"  # Reset color
+
+# Scan settings
+DEFAULT_DEEP = 2  # Subdomain depth
+DEFAULT_MODE = "direct"  # Scan mode (direct, proxy, ssl)
+DEFAULT_OUTPUT = None  # Output file name
+DEFAULT_PORT = 80  # Target port
+DEFAULT_THREADS = 8  # Number of threads
+DEFAULT_IGNORE_REDIRECT_LOCATION = ""  # Ignore redirect location in proxy mode
+DEFAULT_METHOD = "HEAD"  # Default HTTP method
+DEFAULT_PROXY = None  # Default proxy
+
+# BugScanner settings
+PROXY_ROTATOR_PORT = "3080"
+INJECT_ENABLE = True
+INJECT_TYPE = 2
+INJECT_PORT = "8989"
+INJECT_RULES = {}
+INJECT_PAYLOAD = ""
+INJECT_MEEK_TYPE = 0
+INJECT_SERVER_NAME_INDICATION = "twitter.com"
+INJECT_TIMEOUT = 5
+INJECT_SHOW_LOG = False
+
+PSIPHON_CORE = 4
+PSIPHON_CORE_NAME = "psiphon-tunnel-core"
+PSIPHON_TUNNEL = 1
+PSIPHON_REGION = ""
+PSIPHON_PROTOCOLS = [
+    "FRONTED-MEEK-HTTP-OSSH",
+    "FRONTED-MEEK-OSSH",
+]
+PSIPHON_TUNNEL_WORKERS = 6
+PSIPHON_KUOTA_DATA_LIMIT = 4
+PSIPHON_AUTHORISATIONS = [""]
+
+# Separator between variables and Script
+# ================================
+
 import os
 import re
 import sys
@@ -9,12 +53,6 @@ import argparse
 import requests
 import threading
 import signal
-
-CN = "\033[K"
-Y1 = "\033[33m"
-RED = "\033[31m"
-GREEN = "\033[32m"
-CC = "\033[0m"
 
 lock = threading.RLock()
 
@@ -37,30 +75,27 @@ signal.signal(signal.SIGINT, signal_handler)
 
 class BugScanner:
     brainfuck_config = {
-        "ProxyRotator": {"Port": "3080"},
+        "ProxyRotator": {"Port": PROXY_ROTATOR_PORT},
         "Inject": {
-            "Enable": True,
-            "Type": 2,
-            "Port": "8989",
-            "Rules": {},
-            "Payload": "",
-            "MeekType": 0,
-            "ServerNameIndication": "twitter.com",
-            "Timeout": 5,
-            "ShowLog": False,
+            "Enable": INJECT_ENABLE,
+            "Type": INJECT_TYPE,
+            "Port": INJECT_PORT,
+            "Rules": INJECT_RULES,
+            "Payload": INJECT_PAYLOAD,
+            "MeekType": INJECT_MEEK_TYPE,
+            "ServerNameIndication": INJECT_SERVER_NAME_INDICATION,
+            "Timeout": INJECT_TIMEOUT,
+            "ShowLog": INJECT_SHOW_LOG,
         },
-        "PsiphonCore": 4,
+        "PsiphonCore": PSIPHON_CORE,
         "Psiphon": {
-            "CoreName": "psiphon-tunnel-core",
-            "Tunnel": 1,
-            "Region": "",
-            "Protocols": [
-                "FRONTED-MEEK-HTTP-OSSH",
-                "FRONTED-MEEK-OSSH",
-            ],
-            "TunnelWorkers": 6,
-            "KuotaDataLimit": 4,
-            "Authorizations": [""],
+            "CoreName": PSIPHON_CORE_NAME,
+            "Tunnel": PSIPHON_TUNNEL,
+            "Region": PSIPHON_REGION,
+            "Protocols": PSIPHON_PROTOCOLS,
+            "TunnelWorkers": PSIPHON_TUNNEL_WORKERS,
+            "KuotaDataLimit": PSIPHON_KUOTA_DATA_LIMIT,
+            "Authorizations": PSIPHON_AUTHORISATIONS,
         },
     }
     scanned = {"direct": {}, "ssl": {}, "proxy": {}}
@@ -209,13 +244,13 @@ class BugScanner:
 
 def main():
     parser = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=52))
-    parser.add_argument("-d", "--deep", help="subdomain deep", dest="deep", type=int, default=2)
-    parser.add_argument("-m", "--mode", help="direct, proxy, ssl", dest="mode", type=str, default="direct")
+    parser.add_argument("-d", "--deep", help="subdomain deep", dest="deep", type=int, default=DEFAULT_DEEP)
+    parser.add_argument("-m", "--mode", help="direct, proxy, ssl", dest="mode", type=str, default=DEFAULT_MODE)
     parser.add_argument("-o", "--output", help="output file name", dest="output", type=str)
-    parser.add_argument("-p", "--port", help="target port", dest="port", type=int, default=80)
-    parser.add_argument("-t", "--threads", help="threads", dest="threads", type=int, default=8)
-    parser.add_argument("-I", "--ignore-redirect-location", help="ignore redirect location for --mode proxy", dest="ignore_redirect_location", type=str, default="")
-    parser.add_argument("-M", "--method", help="http method", dest="method", type=str, default="HEAD")
+    parser.add_argument("-p", "--port", help="target port", dest="port", type=int, default=DEFAULT_PORT)
+    parser.add_argument("-t", "--threads", help="threads", dest="threads", type=int, default=DEFAULT_THREADS)
+    parser.add_argument("-I", "--ignore-redirect-location", help="ignore redirect location for --mode proxy", dest="ignore_redirect_location", type=str, default=DEFAULT_IGNORE_REDIRECT_LOCATION)
+    parser.add_argument("-M", "--method", help="http method", dest="method", type=str, default=DEFAULT_METHOD)
     parser.add_argument("-P", "--proxy", help="proxy.example.com:8080", dest="proxy", type=str)
 
     args = parser.parse_args()
