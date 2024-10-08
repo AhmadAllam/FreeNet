@@ -23,8 +23,7 @@ The **BugHosts Finder** script is designed to discover "bughosts" in Internet Se
 
 3. **Install the required Python packages:**
    ```bash
-   apt install python3-requests
-   pip install asyncio requests
+   apt install python3-requests && pip install asyncio requests
    ```
 
 4. **Follow the instructions below.**
