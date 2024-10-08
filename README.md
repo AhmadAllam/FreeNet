@@ -97,7 +97,7 @@ The `scan.py` tool is used to perform comprehensive scans on hostnames to check 
    python scan.py -m proxy -p 8080 -P proxy.example.com:8080
    ```
 
-### Multiple Ports Support
+- **Multiple Ports Support:**
 
 You can specify multiple ports for concurrent scanning by separating them with commas. For example:
 ```bash
