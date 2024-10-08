@@ -5,6 +5,7 @@
 The **BugHosts Finder** script is designed to discover "bughosts" in Internet Service Providers, enabling access to free internet using SSH VPN applications like **HTTP Custom**, **HTTP Injector**, **HA Tunnel Plus**, and **TLS Tunnel**.
 
 ---
+
 ### Requirements
 
 - **Termux** or **Kali Nethunter**
@@ -96,12 +97,19 @@ The `scan.py` tool is used to perform comprehensive scans on hostnames to check 
    python scan.py -m proxy -p 8080 -P proxy.example.com:8080
    ```
 
+### Multiple Ports Support
+
+You can specify multiple ports for concurrent scanning by separating them with commas. For example:
+```bash
+python scan.py -m direct -p 80,443
+```
+
 ### Arguments
 
 - `-d`, `--deep`: Specify the subdomain depth (default: 2).
 - `-m`, `--mode`: Set the scan mode (options: direct, proxy, ssl; default: direct).
 - `-f`, `--file`: Input file name (default: `BugHosts/All_Hosts.txt`).
-- `-p`, `--ports`: Target ports (comma-separated; default: 80).
+- `-p`, `--ports`: Target ports (comma-separated; default: 80). You can specify multiple ports for concurrent scanning.
 - `-t`, `--threads`: Number of threads to use (default: 8).
 - `-I`, `--ignore-redirect-location`: Ignore redirect location for proxy mode.
 - `-M`, `--method`: HTTP method to use (default: HEAD).
