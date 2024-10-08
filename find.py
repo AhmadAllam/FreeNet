@@ -1,18 +1,29 @@
+# script setting
+dns1 = "8.8.8.8"
+dns2 = "8.8.4.4"
+mask_choice_1 = (255, 255, 255, 0)
+mask_choice_2 = (255, 255, 0, 0)
+max_requests = 20
+
+# Printing settings
+DARK_BLUE = "\033[34m"
+LIGHT_BLUE = "\033[36m"
+RED = "\033[31m"
+GREEN = "\033[32m"
+CC = "\033[0m"
+
+output_directory = "BugHosts"
+output_file = "All_Hosts.txt"
+ip_output_file = "All_IP.txt"
+
+# -------------------------------------------------------------------
+
 import socket
 import asyncio
 import signal
 import sys
 import argparse
-
-#change_dns
-dns1 = "8.8.8.8"
-dns2 = "8.8.4.4"
-
-#ـــــــــــــــــــــــــــــــــــــــــــــــــــــــــــ
-DARK_BLUE = "\033[34m"
-LIGHT_BLUE = "\033[36m"
-RED = "\033[31m"
-CC = "\033[0m"
+import os
 
 def signal_handler(sig, frame):
     print(f'\n{RED}Goodbye!{CC}')
@@ -63,18 +74,25 @@ async def find_hostnames_in_subnet(ip, mask, max_requests):
 
     prefix = ip.rfind(".")
     subnet = ip[:prefix + 1]
-    filename = "host.txt"
 
     print(f"{'-' * 55}")
     print(f"{DARK_BLUE}{'Host IP':<20} {LIGHT_BLUE}{'Hostname':<20}{CC}")
     print(f"{'-' * 55}")
 
-    try:
-        with open(filename, "a+") as f:
-            f.seek(0)  # Move to the beginning of the file
-            existing_hostnames = f.read().splitlines()  # Read existing hostnames
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
 
-            if mask == (255, 255, 255, 0): 
+    output_path = os.path.join(output_directory, output_file)
+    ip_output_path = os.path.join(output_directory, ip_output_file)
+
+    discovered_hostnames = []
+
+    try:
+        with open(output_path, "a+") as f:
+            f.seek(0)
+            existing_hostnames = f.read().splitlines()
+
+            if mask == mask_choice_1:
                 for i in range(256):
                     addr = f"{subnet}{i}"
                     hostname = await get_hostname(addr)
@@ -82,13 +100,14 @@ async def find_hostnames_in_subnet(ip, mask, max_requests):
                         if hostname not in existing_hostnames:
                             print(f"{DARK_BLUE}{addr:<20} {LIGHT_BLUE}{hostname:<20}{CC}")
                             f.write(hostname + "\n")
-                            existing_hostnames.append(hostname)  # Add to existing hostnames
+                            discovered_hostnames.append(hostname)
+                            existing_hostnames.append(hostname)
                         else:
                             print(f"{DARK_BLUE}{addr:<20} {LIGHT_BLUE}{'Duplicate hostname':<20}{CC}")
                     else:
                         print(f"{DARK_BLUE}{addr:<20} {LIGHT_BLUE}{'No hostname':<20}{CC}")
 
-            elif mask == (255, 255, 0, 0): 
+            elif mask == mask_choice_2:
                 first_two_octets = '.'.join(ip.split('.')[:2]) + '.'
                 for second_octet in range(256):
                     for i in range(256):
@@ -98,6 +117,7 @@ async def find_hostnames_in_subnet(ip, mask, max_requests):
                             if hostname not in existing_hostnames:
                                 print(f"{DARK_BLUE}{full_addr:<20} {LIGHT_BLUE}{hostname:<20}{CC}")
                                 f.write(hostname + "\n")
+                                discovered_hostnames.append(hostname)
                                 existing_hostnames.append(hostname)
                             else:
                                 print(f"{DARK_BLUE}{full_addr:<20} {LIGHT_BLUE}{'Duplicate hostname':<20}{CC}")
@@ -107,28 +127,47 @@ async def find_hostnames_in_subnet(ip, mask, max_requests):
     except Exception as e:
         print(f"An unexpected error occurred while fetching hostnames: {e}")
 
-    print(f"{RED}Finished searching in subnet with mask: {mask}{CC}")
-    print("Finished")
+    print(f"{GREEN}Finished in mask: {mask}{CC}") 
+
+    print()
+    print()
+
+    # Convert discovered hostnames to IP addresses and save to All_IP.txt
+    print(f"{GREEN}converting hostnames to IP addresses...{CC}")  
+
+    try:
+        with open(ip_output_path, "w") as ip_file:
+            for hostname in discovered_hostnames:
+                try:
+                    ip_address = socket.gethostbyname(hostname)
+                    ip_file.write(ip_address + "\n")
+                except socket.gaierror:
+                    ip_file.write(f'no ip "{hostname}"\n')
+                    print(f"Could not resolve IP for hostname: {hostname}")
+    except Exception as e:
+        print(f"An unexpected error occurred while saving IP addresses: {e}")
+
+    print(f"{GREEN}Successfully completed!{CC}")  
     sys.exit(0)
 
 def main():
+    print("\033[H\033[J", end="")
     set_dns()
     parser = argparse.ArgumentParser(description="Find hostnames in a subnet.")
     parser.add_argument("site", help="The site to get IP address from.")
     parser.add_argument("mask", type=int, nargs='?', default=1, choices=[1, 2], help="The subnet mask choice (1 or 2).")
-    parser.add_argument("--threads", type=int, default=20, help="Maximum number of concurrent requests.")
-    
+
     args = parser.parse_args()
 
     ip = get_ip_address(args.site)
-    
+
     if args.mask == 1:
-        mask = (255, 255, 255, 0)  
+        mask = mask_choice_1
     elif args.mask == 2:
-        mask = (255, 255, 0, 0)
+        mask = mask_choice_2
 
     if ip:
-        asyncio.run(find_hostnames_in_subnet(ip, mask, args.threads))
+        asyncio.run(find_hostnames_in_subnet(ip, mask, max_requests))
 
 if __name__ == "__main__":
     main()
