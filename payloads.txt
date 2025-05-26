@@ -1,0 +1,71 @@
+HOST_HEADER:Host: free.facebook.com
+HOST_HEADER:Host: zero.facebook.com
+HOST_HEADER:Host: connectivity-test.gstatic.com
+HOST_HEADER:Host: www.google.com
+HOST_HEADER:Host: www.facebook.com
+HOST_HEADER:Host: m.facebook.com
+HOST_HEADER:Host: 0.facebook.com
+HOST_HEADER:Host: whatsapp.com
+HOST_HEADER:Host: telegram.org
+HOST_HEADER:Host: twitter.com
+HOST_HEADER:Host: instagram.com
+HOST_HEADER:Host: bing.com
+HOST_HEADER:Host: example.com@www.google.com
+HOST_HEADER:Host: www.telecom.com.example.com
+HOST_HEADER:Host: youtube.com
+HOST_HEADER:X-Online-Host: free.facebook.com
+HOST_HEADER:X-Online-Host: zero.facebook.com
+HOST_HEADER:X-Online-Host: www.google.com
+HOST_HEADER:X-Real-Host: www.facebook.com
+HOST_HEADER:X-Forwarded-Host: free.facebook.com
+HOST_HEADER:X-Forwarded-Host: www.youtube.com
+HOST_HEADER:X-Forwarded-For: 127.0.0.1
+HOST_HEADER:X-Forwarded-Proto: https
+HOST_HEADER:Proxy-Host: free.facebook.com
+HOST_HEADER:Via: 1.1 free.facebook.com
+HOST_HEADER:Referer: http://free.facebook.com/
+HOST_HEADER:Host: TARGET_URL
+
+URL_PREFIX:http://www.google.com@TARGET_URL/
+URL_PREFIX:http://facebook.com@TARGET_URL/
+URL_PREFIX:http://m.facebook.com@TARGET_URL/
+URL_PREFIX:http://0.facebook.com@TARGET_URL/
+URL_PREFIX:http://whatsapp.com@TARGET_URL/
+URL_PREFIX:http://telegram.org@TARGET_URL/
+URL_PREFIX:http://twitter.com@TARGET_URL/
+URL_PREFIX:http://instagram.com@TARGET_URL/
+URL_PREFIX:http://bing.com@TARGET_URL/
+URL_PREFIX:http://youtube.com@TARGET_URL/
+URL_PREFIX:http://127.0.0.1@TARGET_URL/
+URL_PREFIX:http://localhost@TARGET_URL/
+URL_PREFIX:http://TARGET_URL.
+URL_PREFIX:http://www.facebook.com%20TARGET_URL
+URL_PREFIX:http://facebook.com%20TARGET_URL
+
+URL_SUFFIX:/?
+URL_SUFFIX:/%20
+URL_SUFFIX:/%00
+URL_SUFFIX:/#
+URL_SUFFIX:/.
+URL_SUFFIX://
+URL_SUFFIX:/google.com
+URL_SUFFIX:/facebook.com
+URL_SUFFIX:/login
+URL_SUFFIX:/status
+URL_SUFFIX:/api/
+URL_SUFFIX:/vpn/
+URL_SUFFIX:?url=http://www.google.com
+URL_SUFFIX:?redir=http://www.google.com
+
+HTTP_REQUEST_LINE_INJECTION:CONNECT TARGET_URL:80 HTTP/1.1[crlf]Host: free.facebook.com[crlf][crlf]
+HTTP_REQUEST_LINE_INJECTION:CONNECT TARGET_URL:443 HTTP/1.1[crlf]Host: free.facebook.com[crlf][crlf]
+HTTP_REQUEST_LINE_INJECTION:GET http://free.facebook.com/ TARGET_URL HTTP/1.1[crlf]Host: free.facebook.com[crlf][crlf]
+HTTP_REQUEST_LINE_INJECTION:GET / HTTP/1.1[crlf]Host: free.facebook.com[crlf]X-Forwarded-Host: www.google.com[crlf]Connection: close[crlf][crlf]
+HTTP_REQUEST_LINE_INJECTION:GET / HTTP/1.1[crlf]Host: free.facebook.com[crlf]Content-Length: 0[crlf][crlf]
+HTTP_REQUEST_LINE_INJECTION:GET / HTTP/1.1[crlf]Host: free.facebook.com[crlf]Content-Length: 4[crlf][crlf]ABCD
+HTTP_REQUEST_LINE_INJECTION:GET / HTTP/1.1[crlf]Host: free.facebook.com[crlf]Transfer-Encoding: chunked[crlf][crlf]0[crlf][crlf]
+HTTP_REQUEST_LINE_INJECTION:GET / TARGET_URL HTTP/1.1[crlf]Host: free.facebook.com[crlf]X-Online-Host: www.google.com[crlf][crlf]
+
+# Note: HTTP_METHOD was integrated into HTTP_REQUEST_LINE_INJECTION for raw socket handling.
+# The original HTTP_METHOD:CONNECT payloads are now part of HTTP_REQUEST_LINE_INJECTION
+# as they require direct socket manipulation for the CONNECT method.
