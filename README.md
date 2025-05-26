@@ -1,133 +1,139 @@
 # BugHosts Finder
 
-## Description
+## Overview
 
-The **BugHosts Finder** script is designed to discover "bughosts" in Internet Service Providers, enabling access to free internet using SSH VPN applications like **HTTP Custom**, **HTTP Injector**, **HA Tunnel Plus**, and **TLS Tunnel**.
-
----
-
-### Requirements
-
-- **Termux** or **Kali Nethunter**
-
-### Installing & Executing
-
-1. **Navigate to the FreeNet directory:**
-   ```bash
-   cd /FreeNet
-   ```
-
-2. **Make all scripts executable:**
-   ```bash
-   chmod +x *
-   ```
-
-3. **Install the required Python packages:**
-   ```bash
-   apt install python3-requests && pip install asyncio requests
-   ```
-
-4. **Follow the instructions below.**
+**BugHosts Finder** is a collection of Python scripts designed to help you find "bughosts" within Internet Service Providers. These bughosts can potentially be used to access free internet via SSH VPN apps like **HTTP Custom**, **HTTP Injector**, **HA Tunnel Plus**, and **TLS Tunnel**.
 
 ---
 
-# **Find Tool: `find.py`**
-
-### How to Run
-
-You can run the `find.py` tool using the command line. The tool requires inputs for the site name and subnet mask. There are two options for the subnet mask:
-
-- **Option 1:** Subnet mask `255.255.255.0`
-- **Option 2:** Subnet mask `255.255.0.0`
-
-### Examples
-
-- **Using Subnet Mask 255.255.255.0:**
-   ```bash
-   python find.py vodafone.com 1
-   ```
-
-- **Using Subnet Mask 255.255.0.0:**
-   ```bash
-   python find.py vodafone.com 2
-   ```
-
-### Additional Options
-
-You can specify the number of concurrent requests using the `--threads` option. For example, to set 10 concurrent requests:
-```bash
-python find.py vodafone.com 1 --threads 10
-```
-
----
-
-## Output
-
-After running the program:
-
-- Hostnames for each IP address in the specified subnet will be searched.
-- Results will be printed to the console.
-- Hostnames will be stored in the file:
-  - **Path:** `BugHosts/All_Hosts.txt`
-- Discovered hostnames will be converted to IP addresses and saved in:
-  - **Path:** `BugHosts/All_IP.txt`
-
----
-
-# **Scan Tool: `scan.py`**
-
-### Overview
-
-The `scan.py` tool is used to perform comprehensive scans on hostnames to check their availability and gather information about them. The tool supports different modes of scanning, including direct requests, SSL requests, and proxy requests.
-
-### How to Use
-
-- **To run the scan with default settings:**
-   ```bash
-   python scan.py
-   ```
-
-- **For a direct scan:**
-   ```bash
-   python scan.py -m direct -o hosts.txt -p 80
-   ```
-
-- **To run it using a proxy:**
-   ```bash
-   python scan.py -m proxy -p 8080 -P proxy.example.com:8080
-   ```
-
-- **Multiple Ports Support:**
+## Quick Start
 
 ```bash
-python scan.py -m direct -p 80,443
-```
-
-### Arguments
-
-- `-d`, `--deep`: Specify the subdomain depth (default: 2).
-- `-m`, `--mode`: Set the scan mode (options: direct, proxy, ssl; default: direct).
-- `-f`, `--file`: Input file name (default: `BugHosts/All_Hosts.txt`).
-- `-p`, `--ports`: Target ports (comma-separated; default: 80). You can specify multiple ports for concurrent scanning.
-- `-t`, `--threads`: Number of threads to use (default: 8).
-- `-I`, `--ignore-redirect-location`: Ignore redirect location for proxy mode.
-- `-M`, `--method`: HTTP method to use (default: HEAD).
-- `-P`, `--proxy`: Specify proxy in the format `proxy.example.com:8080`.
-
----
-
-## Notes
-
-This tool is made with love for:
-
-```
-#unlimited_internet_in_egypt
+git clone https://github.com/AhmadAllam/FreeNet.git
+cd FreeNet
+chmod +x *
 ```
 
 ---
 
-## Authors
+## Requirements
 
-* **Dev. AhmadAllam**
-  * My account: [Telegram](https://t.me/echo_Allam)
-  * Don't forget Palestine ❤️
+```bash
+apt update && apt upgrade -y
+apt install python3 python3-pip
+pip install asyncio-throttle aiohttp aiofiles
+```
+
+---
+
+## Scripts & Usage
+
+### 1. `mode_find.py`: Find Hosts in IP Ranges
+
+- **Help and options:**
+   ```bash
+   python mode_find.py -h
+   ```
+- **Scan a /24 subnet (254 possible IP addresses):**
+   ```bash
+   python mode_find.py -s vodafone.com -m 1
+   ```
+- **Scan a /16 subnet (65,536 possible IP addresses):**
+   ```bash
+   python mode_find.py -s vodafone.com -m 2
+   ```
+
+**Output:**
+- Discovered hostnames: `BugHosts/All_Hosts.txt`
+- Corresponding IP addresses: `BugHosts/All_IP.txt`
+
+---
+
+### 2. `mode_direct.py`: Scan Hosts for Open Ports and Services
+
+- **Help and options:**
+   ```bash
+   python mode_direct.py -h
+   ```
+- **Scan with default settings (uses `BugHosts/All_Hosts.txt` and ports 80, 443):**
+   ```bash
+   python mode_direct.py
+   ```
+- **Scan a specific file and port:**
+   ```bash
+   python mode_direct.py -f my_hosts.txt -p 80
+   ```
+- **Scan multiple ports concurrently:**
+   ```bash
+   python mode_direct.py -p 80,443,8080
+   ```
+- **Scan using a proxy:**
+   ```bash
+   python mode_direct.py -P proxy.example.com:8080 -p 80
+   ```
+
+**Output:**
+- "Cloud Hosts" (based on server headers/heuristics): `BugHosts/cloud_hosts.txt`
+- "Other Hosts": `BugHosts/other_hosts.txt`
+
+---
+
+### 3. `mode_payload.py`: Test Hosts with Custom HTTP Payloads
+
+- **Help and options:**
+   ```bash
+   python mode_payload.py -h
+   ```
+- **Run with default settings (uses `BugHosts/All_Hosts.txt` as input, `payloads.txt` for payloads, and `http://www.google.com/generate_204` as the target URL):**
+   ```bash
+   python mode_payload.py
+   ```
+- **Specify a custom input file and payloads file:**
+   ```bash
+   python mode_payload.py -f my_custom_hosts.txt --payloads-file my_custom_payloads.txt
+   ```
+
+**Output:**
+- Discovered bug hosts: `BugHosts/payload_bugs.txt`
+
+---
+
+### 4. `mode_proxy.py`: Hunt for Open Proxies
+
+- **Help and options:**
+   ```bash
+   python mode_proxy.py -h
+   ```
+- **Run with default settings (uses `BugHosts/All_Hosts.txt` and a list of common proxy ports like 80, 8080, 3128, etc.):**
+   ```bash
+   python mode_proxy.py
+   ```
+- **Specify custom ports to scan for proxies (e.g., only ports 80 and 8080):**
+   ```bash
+   python mode_proxy.py -p 80,8080
+   ```
+- **Use a specific input file for hostnames/IPs:**
+   ```bash
+   python mode_proxy.py -f my_ip_list.txt
+   ```
+
+**Output:**
+- Discovered open proxies: `BugHosts/open_proxies.txt`
+
+---
+
+## Important Notes
+
+- This tool is provided for educational and research purposes only. Use it responsibly and ethically.
+- Built with ❤️ for:  
+  ```
+  #unlimited_internet_in_egypt
+  ```
+
+---
+
+## Author
+
+- **Dev. AhmadAllam**
+    - [Telegram](https://t.me/echo_Allam)
+    - Don't forget Palestine ❤️
