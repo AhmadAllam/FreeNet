@@ -135,5 +135,5 @@ pip install asyncio-throttle aiohttp aiofiles
 ## Author
 
 - **Dev. AhmadAllam**
-    - [Telegram](https://t.me/echo_Allam)
+   - Telegram: [@echo_tester](https://t.me/echo_tester)
     - Don't forget Palestine ❤️
