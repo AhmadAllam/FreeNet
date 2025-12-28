@@ -1,4 +1,0 @@
-hostname
---------
-82.129.223.98
-mobile.vodafone.com.eg
